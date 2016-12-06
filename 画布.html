@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title></title>
+	</head>
+	<style>
+		body,div{margin: 0px;padding: 0px;text-align: center;}
+		#cav{
+			border: 2px solid black;
+			border-radius: 4px;
+			box-shadow: 0px 0px 10px black;
+			-webkit-box-shadow: 0px 0px 10px black;
+			}
+		#bk{
+			margin: 10px auto;
+			width: 400px;
+			height: 36px;
+		}
+		.bk{
+			text-align: center;
+			width: 20px;
+			height: 20px;
+			margin: 12px;
+			display: inline-block;
+			border: 1px dotted gray;
+		}
+	</style>
+	<body>
+		<div id="bk" align="center"></div>
+		<canvas id="cav" width="400px" height="300px"></canvas>
+	</body>
+	<script src="../../../js/jquery-1.12.2.min.js"></script>
+	<script charset="UTF-8">
+		//定义画笔颜色
+		var bColor = ["#000000","#999999","#cc66ff","#ff0000","#ff9900","#ffff00","#008000","#00ccff"];
+		//当前画笔颜色
+		var col="#ff0000";
+		function initBrush(){
+			for (var i=0;i<bColor.length;i++){
+				var bk = $("<span class='bk'></span>")
+				.css("background",bColor[i])
+				.click(function(){
+					col=$(this).css("background-color");
+				});
+				$("#bk").append(bk)
+			}
+		}
+		function initPainter(){
+			//绑定绘图canvas
+			var can = $("#cav"),self = this,x=0,y=0;
+			var ctx = can[0].getContext("2d");
+			ctx.lineWidth = 2;
+			//绑定鼠标按下时间
+			can.on("mousedown",function(e){
+				e.preventDefault();
+				ctx.strokeStyle=col;
+				x=e.offsetX;
+				y=e.offsetY;
+				//开始路径
+				ctx.beginPath();ctx.moveTo(x,y);//绑定鼠标移动事件
+				can.on("mousemove",function(e){
+					var nx = event.offsetX,
+					ny = event.offsetY;
+				ctx.lineTo(x,y);
+				ctx.stroke();
+				x=nx;
+				y=ny;
+				});
+				//绑定鼠标抬起事件
+				can.on("mouseup",function(){
+					//取消鼠标移动事件
+					can.off("mousemove");
+				});
+			})
+		}
+		$(document).ready(function(){
+			initBrush();
+			initPainter();
+		})
+	</script>
+</html>
